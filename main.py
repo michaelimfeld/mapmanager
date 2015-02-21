@@ -29,6 +29,10 @@ def main():
 
     pattern = r'href=[\'"]?([^\'" >]+)'
     response = urllib2.urlopen(options.fastdl).read()
+    maplist_file = options.root_dir + "csgo/maplist.txt"
+
+    if os.path.isfile(maplist_file):
+        os.remove(maplist_file)
 
     for fn in re.findall(pattern, response):
         if 'bz2' in fn and options.search in fn:
@@ -44,15 +48,12 @@ def main():
             shutil.move(fn, map_dir + fn)
             subprocess.call(['bzip2', '-d', map_dir + fn])
 
-            maplist_file = options.root_dir + "csgo/maplist.txt"
-            if os.path.isfile(maplist_file):
-                os.remove(maplist_file)
 
             map_name = fn.split('.')[0]
-            with open(maplist_file, 'w+') as maplist:
+            with open(maplist_file, 'a') as maplist:
                 maplist.write(map_name + '\n')
 
-            shutil.copyfile(maplist_file, options.root_dir + 'csgo/mapcycle.txt')
+    shutil.copyfile(maplist_file, options.root_dir + 'csgo/mapcycle.txt')
 
 
 if __name__ == '__main__':
