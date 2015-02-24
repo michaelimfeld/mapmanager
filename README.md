@@ -8,6 +8,12 @@ Mapy is a simple tool to manage custom cs:go maps on your server. The maps will 
 
 Don't forget to change the config file: /etc/mapy.conf!
 
+    server: https://server.ch/csgo/maps/
+
+You also need to set the fastdl server url in csgo/cfg/server.cfg:
+
+    sv_downloadurl "https://server.ch/csgo/"
+
 ## usage
 
 Navigate to your cs:go server's root dir:
@@ -18,7 +24,5 @@ To add or remove maps simply do:
 
     mapy add surf_mesa
     mapy remove surf_mesa
-
-You need to set the fastdl server url in csgo/cfg/server.cfg:
-
-    sv_downloadurl "https://server.ch/csgo/"
+    
+Mapy will sync maplist.txt and mapcycle.txt!
