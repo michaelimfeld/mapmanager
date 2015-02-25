@@ -15,7 +15,7 @@ class Mapy():
         config_yaml = yaml.load(config_file)
 
         self.server_url = config_yaml["server"]
-        self.root_dir = ''
+        self.root_dir = config_yaml["rootdir"]
         self.map_dir = self.root_dir + 'csgo/maps/'
 
     def get_map(self, url):
