@@ -1,0 +1,12 @@
+Source: mapy
+Maintainer: Michael Imfeld <michaelimfeld@crooked.ch>
+Section: python
+Priority: optional
+Build-Depends: python-setuptools (>= 0.6b3), python-all (>= 2.6.6-3), debhelper (>= 7.4.3)
+Standards-Version: 3.9.1
+
+Package: mapy
+Architecture: any
+Depends: ${misc:Depends}, ${python:Depends}
+Description: simple tool to manage custom cs:go maps on your server
+
