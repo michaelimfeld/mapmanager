@@ -68,6 +68,11 @@ class Mapy():
         print args.name, "successfully removed!"
         self.sync_mapfiles()
 
+    def list_maps(self, args):
+        for file in os.listdir("csgo/maps/"):
+            if file.endswith(".bsp"):
+                print('.'.join(file.split('.')[:-1]))
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -80,6 +85,9 @@ def main():
     parser_remove = subparsers.add_parser('remove')
     parser_remove.add_argument('name')
     parser_remove.set_defaults(func=Mapy().remove_map)
+
+    parser_list = subparsers.add_parser('list')
+    parser_list .set_defaults(func=Mapy().list_maps)
 
     args = parser.parse_args()
     args.func(args)
