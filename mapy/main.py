@@ -15,9 +15,10 @@ class Mapy():
         config_yaml = yaml.load(config_file)
 
         self.server_url = config_yaml["server"]
+        self.root_dir = ''
+        self.map_dir = self.root_dir + 'csgo/maps/'
 
     def get_map(self, url):
-        map_dir = 'csgo/maps/'
         file_name = url.split('/')[-1]
 
         fp = open(file_name, "wb")
@@ -27,17 +28,17 @@ class Mapy():
         curl.perform()
         curl.close()
         fp.close()
-        shutil.move(file_name, map_dir + file_name)
-        subprocess.call(['bzip2', '-d', map_dir + file_name])
+        shutil.move(file_name, self.map_dir + file_name)
+        subprocess.call(['bzip2', '-d', self.map_dir + file_name])
 
     def sync_mapfiles(self):
-        shutil.copyfile('csgo/maplist.txt', 'csgo/mapcycle.txt')
+        shutil.copyfile(self.root_dir + 'csgo/maplist.txt', self.root_dir + 'csgo/mapcycle.txt')
 
     def add_map(self, args):
         print "adding", args.name
         self.get_map(self.server_url + args.name + '.bsp.bz2')
 
-        with open('csgo/maplist.txt', 'ab+') as f:
+        with open(self.root_dir + 'csgo/maplist.txt', 'ab+') as f:
             if args.name not in f.read():
                 f.write(args.name + '\n')
             else:
@@ -51,25 +52,25 @@ class Mapy():
         print "removing", args.name
         output = []
 
-        map_file = 'csgo/maps/' + args.name + '.bsp'
+        map_file = self.map_dir + args.name + '.bsp'
 
         if os.path.isfile(map_file):
             print "deleting", map_file
             os.remove(map_file)
 
-        with open('csgo/maplist.txt', 'ab+') as maplist_file:
+        with open(self.root_dir + 'csgo/maplist.txt', 'ab+') as maplist_file:
             for line in maplist_file:
                 if line.strip() != args.name:
                     output.append(line)
 
-        with open('csgo/maplist.txt', 'w') as maplist_file:
+        with open(self.root_dir + 'csgo/maplist.txt', 'w') as maplist_file:
             maplist_file.writelines(output)
 
         print args.name, "successfully removed!"
         self.sync_mapfiles()
 
     def list_maps(self, args):
-        for file in os.listdir("csgo/maps/"):
+        for file in os.listdir(self.map_dir):
             if file.endswith(".bsp"):
                 print('.'.join(file.split('.')[:-1]))
 
@@ -78,15 +79,15 @@ def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
-    parser_add = subparsers.add_parser('add')
-    parser_add.add_argument('name')
+    parser_add = subparsers.add_parser('add', help='add map to cs:go server')
+    parser_add.add_argument('name', help='map name')
     parser_add.set_defaults(func=Mapy().add_map)
 
-    parser_remove = subparsers.add_parser('remove')
-    parser_remove.add_argument('name')
+    parser_remove = subparsers.add_parser('remove', help='remove map from cs:go server')
+    parser_remove.add_argument('name', help='map name')
     parser_remove.set_defaults(func=Mapy().remove_map)
 
-    parser_list = subparsers.add_parser('list')
+    parser_list = subparsers.add_parser('list', help='list all installed maps')
     parser_list .set_defaults(func=Mapy().list_maps)
 
     args = parser.parse_args()
