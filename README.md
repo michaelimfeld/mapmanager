@@ -10,6 +10,8 @@ Don't forget to change the config file: /etc/mapy.conf!
 
     server: https://server.ch/csgo/maps/
 
+You can also set the root dir of your cs:go server. However if you have more than one cs:go server, leave it empty! Relative paths will be used then.
+
 You also need to set the fastdl server url in csgo/cfg/server.cfg:
 
     sv_downloadurl "https://server.ch/csgo/"
@@ -24,5 +26,9 @@ To add or remove maps simply do:
 
     mapy add surf_mesa
     mapy remove surf_mesa
-    
+
+To see a list of all available/installed maps:
+
+    mapy list
+
 Mapy will sync maplist.txt and mapcycle.txt!
