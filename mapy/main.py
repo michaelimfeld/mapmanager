@@ -6,9 +6,15 @@ import shutil
 import subprocess
 import os
 import yaml
+import urllib2
+import re
 
 
 class Mapy():
+
+    SUCCESS = '\033[92m'
+    WARN = '\033[93m'
+    ENDC = '\033[0m'
 
     def __init__(self):
         config_file = open('/etc/mapy.conf', 'r')
@@ -35,16 +41,16 @@ class Mapy():
         shutil.copyfile(self.root_dir + 'csgo/maplist.txt', self.root_dir + 'csgo/mapcycle.txt')
 
     def add_map(self, args):
-        print "adding", args.name
+        print('downloading ' + args.name)
         self.get_map(self.server_url + args.name + '.bsp.bz2')
 
         with open(self.root_dir + 'csgo/maplist.txt', 'ab+') as f:
             if args.name not in f.read():
                 f.write(args.name + '\n')
             else:
-                print args.name, "already in maplist.txt!"
+                print(Mapy.WARN + args.name + 'already in maplist.txt!' + Mapy.ENDC)
 
-        print args.name, "successfully added!"
+        print(Mapy.SUCCESS + args.name + ' successfully added!' + Mapy.ENDC)
         self.sync_mapfiles()
 
 
@@ -70,9 +76,29 @@ class Mapy():
         self.sync_mapfiles()
 
     def list_maps(self, args):
+
+        installed = []
         for file in os.listdir(self.map_dir):
             if file.endswith(".bsp"):
-                print('.'.join(file.split('.')[:-1]))
+                installed.append('.'.join(file.split('.')[:-1]))
+
+        for map_url in self.get_map_urls():
+            map_name = '.'.join(map_url.split('.')[:-2])
+            if map_name in installed:
+                print(Mapy.SUCCESS + "[INSTALLED] " + map_name + Mapy.ENDC)
+            else:
+                print "[AVAILABLE]", map_name
+
+
+    def get_map_urls(self):
+        pattern = r'href=[\'"]?([^\'" >]+)'
+        response = urllib2.urlopen(self.server_url).read()
+
+        urls = []
+        for map_link in re.findall(pattern, response):
+            if 'bz2' in map_link:
+                urls.append(map_link)
+        return urls
 
 
 def main():
@@ -115,7 +141,6 @@ def main():
             #with open(maplist_file, 'a') as maplist:
                 #maplist.write(map_name + '\n')
 
-    #shutil.copyfile(maplist_file, options.root_dir + 'csgo/mapcycle.txt')
 
 
 if __name__ == '__main__':
