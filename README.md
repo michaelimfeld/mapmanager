@@ -6,6 +6,10 @@ Mapy is a simple tool to manage custom cs:go maps on your server. The maps will 
     debuild -us -uc
     sudo dpkg -i ../mapy_0.00.01_amd64.deb
 
+If you have troubles installing mapy with its dependencies try:
+
+    sudo apt-get install python-setuptools python-yaml python-curl
+
 Don't forget to change the config file: /etc/mapy.conf!
 
     server: https://server.ch/csgo/maps/
